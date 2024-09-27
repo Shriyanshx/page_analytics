@@ -1,5 +1,7 @@
 # PageAnalytics
 
+<a href="https://ibb.co/xgNVjv3"><img src="https://i.ibb.co/5jPq8D2/Untitled-design.png" alt="Untitled-design" border="0"></a>
+
 PageAnalytics is a Flutter package that provides an easy way to track page views and time spent on each page in your Flutter application. It offers callbacks for page start and stop events, making it simple to implement analytics in your app regardless of the navigation method you use.
 
 ## Features
