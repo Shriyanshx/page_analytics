@@ -2,6 +2,7 @@ name: page_analytics
 description: A Flutter package for tracking page analytics in your app.
 version: 1.0.0
 homepage: https://github.com/shriyanshx/page_analytics
+license: MIT
 
 environment:
   sdk: '>=3.3.3 <4.0.0'
