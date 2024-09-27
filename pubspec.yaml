@@ -1,6 +1,6 @@
 name: page_analytics
 description: A Flutter plugin for tracking page views and time spent on each page in your application. Provides callbacks for page start and stop events, allowing easy integration with custom analytics systems.
-version: 1.0.5
+version: 1.0.6
 homepage: https://github.com/shriyanshx/page_analytics
 license: MIT
 

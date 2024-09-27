@@ -2,8 +2,7 @@
 
 <a href="https://ibb.co/xgNVjv3"><img src="https://i.ibb.co/5jPq8D2/Untitled-design.png" alt="Untitled-design" border="0"></a>
 
-
-PageViewAnalytics is a Flutter plugin that helps you track page views and time spent on each page in your application. It provides callbacks for page start and stop events, allowing you to integrate with your analytics system easily.
+PageAnalytics is a Flutter plugin that helps you track page views and time spent on each page in your application. It provides callbacks for page start and stop events, allowing you to integrate with your analytics system easily.
 
 ## Features
 
@@ -19,7 +18,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  page_view_analytics: ^1.0.0
+  page_analytics: ^1.0.0
 ```
 
 Then run:
@@ -33,13 +32,13 @@ $ flutter pub get
 1. Import the package in your Dart code:
 
 ```dart
-import 'package:page_view_analytics/page_view_analytics.dart';
+import 'package:page_analytics/page_analytics.dart';
 ```
 
-2. Create an instance of `PageViewAnalytics`:
+2. Create an instance of `PageAnalytics`:
 
 ```dart
-final analytics = PageViewAnalytics(
+final analytics = PageAnalytics(
   onPageStart: (pageName, pageData) {
     // Handle page start event
     print('Page started: $pageName');
@@ -56,7 +55,7 @@ final analytics = PageViewAnalytics(
 
 ```dart
 class MyApp extends StatelessWidget {
-  final PageViewAnalytics analytics;
+  final PageAnalytics analytics;
 
   MyApp({required this.analytics});
 
@@ -64,7 +63,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       onGenerateRoute: (settings) {
-        // Let PageViewAnalytics handle the route for analytics
+        // Let PageAnalytics handle the route for analytics
         analytics.onGenerateRoute(settings);
         
         // Your actual route generation logic here
@@ -88,14 +87,14 @@ void dispose() {
 
 ## Example
 
-Here's a more complete example of how to use PageViewAnalytics in a Flutter app:
+Here's a more complete example of how to use PageAnalytics in a Flutter app:
 
 ```dart
 import 'package:flutter/material.dart';
-import 'package:page_view_analytics/page_view_analytics.dart';
+import 'package:page_analytics/page_analytics.dart';
 
 void main() {
-  final analytics = PageViewAnalytics(
+  final analytics = PageAnalytics(
     onPageStart: (pageName, pageData) {
       print('Page started: $pageName');
       print('Page data: $pageData');
@@ -111,14 +110,14 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  final PageViewAnalytics analytics;
+  final PageAnalytics analytics;
 
   MyApp({required this.analytics});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'PageViewAnalytics Demo',
+      title: 'PageAnalytics Demo',
       onGenerateRoute: (settings) {
         analytics.onGenerateRoute(settings);
         
@@ -165,10 +164,10 @@ class DetailsPage extends StatelessWidget {
 }
 ```
 
-In this example, the `PageViewAnalytics` instance will track navigation between the `HomePage` and `DetailsPage`, providing start and stop events for each page view.
+In this example, the `PageAnalytics` instance will track navigation between the `HomePage` and `DetailsPage`, providing start and stop events for each page view.
 
 ## Notes
 
-- Make sure to handle the disposal of the `PageViewAnalytics` instance when it's no longer needed to avoid memory leaks.
+- Make sure to handle the disposal of the `PageAnalytics` instance when it's no longer needed to avoid memory leaks.
 - The `restrictedScreens` parameter allows you to specify pages that should not be tracked.
 - The plugin automatically handles app lifecycle changes, tracking when the app is paused or resumed.
