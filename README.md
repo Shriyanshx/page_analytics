@@ -2,30 +2,30 @@
 
 <a href="https://ibb.co/xgNVjv3"><img src="https://i.ibb.co/5jPq8D2/Untitled-design.png" alt="Untitled-design" border="0"></a>
 
-PageAnalytics is a Flutter package that provides an easy way to track page views and time spent on each page in your Flutter application. It offers callbacks for page start and stop events, making it simple to implement analytics in your app regardless of the navigation method you use.
+
+PageViewAnalytics is a Flutter plugin that helps you track page views and time spent on each page in your application. It provides callbacks for page start and stop events, allowing you to integrate with your analytics system easily.
 
 ## Features
 
-- Tracking of page views
-- Measurement of time spent on each page
-- Lifecycle-aware (handles app paused and resumed states)
-- Customizable page start and stop callbacks
-- Support for restricted screens (pages you don't want to track)
-- Flexible integration with various navigation methods
+- Track page views automatically
+- Measure time spent on each page
+- Handle app lifecycle changes (pause/resume)
+- Option to exclude specific pages from tracking
+- Easy integration with custom analytics systems
 
 ## Installation
 
-Add `page_analytics` to your `pubspec.yaml` file:
+Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  page_analytics: ^1.0.0
+  page_view_analytics: ^1.0.0
 ```
 
 Then run:
 
 ```
-flutter pub get
+$ flutter pub get
 ```
 
 ## Usage
@@ -33,78 +33,111 @@ flutter pub get
 1. Import the package in your Dart code:
 
 ```dart
-import 'package:page_analytics/page_analytics.dart';
+import 'package:page_view_analytics/page_view_analytics.dart';
 ```
 
-2. Create an instance of `PageAnalytics` in your app:
+2. Create an instance of `PageViewAnalytics`:
 
 ```dart
-final PageAnalytics analytics = PageAnalytics(
+final analytics = PageViewAnalytics(
   onPageStart: (pageName, pageData) {
-    // Implement your page start tracking logic here
-    print('Page started: $pageName with data: $pageData');
+    // Handle page start event
+    print('Page started: $pageName');
   },
   onPageStop: (pageName, timeSpent, pageData) {
-    // Implement your page stop tracking logic here
-    print('Page stopped: $pageName, time spent: $timeSpent seconds, data: $pageData');
+    // Handle page stop event
+    print('Page stopped: $pageName, Time spent: $timeSpent seconds');
   },
-  restrictedScreens: ['splash', 'loading'],
+  restrictedScreens: ['/login', '/splash'], // Optional: pages to exclude from tracking
 );
 ```
 
-3. Use the `PageAnalytics` instance in your navigation logic:
+3. Integrate with your app's navigation:
 
 ```dart
-// For named routes
-Navigator.pushNamed(context, '/details', arguments: {'id': '123'});
-
-// For anonymous routes
-Navigator.push(
-  context,
-  MaterialPageRoute(
-    builder: (context) => DetailsPage(),
-    settings: RouteSettings(name: '/details', arguments: {'id': '123'}),
-  ),
-);
-```
-
-## Example
-
-Here's a basic example of how to use PageAnalytics in a Flutter app:
-
-```dart
-import 'package:flutter/material.dart';
-import 'package:page_analytics/page_analytics.dart';
-
-void main() {
-  runApp(MyApp());
-}
-
 class MyApp extends StatelessWidget {
-  final PageAnalytics analytics = PageAnalytics(
-    onPageStart: (pageName, pageData) {
-      print('Page started: $pageName with data: $pageData');
-    },
-    onPageStop: (pageName, timeSpent, pageData) {
-      print('Page stopped: $pageName, time spent: $timeSpent seconds, data: $pageData');
-    },
-    restrictedScreens: ['splash'],
-  );
+  final PageViewAnalytics analytics;
+
+  MyApp({required this.analytics});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'PageAnalytics Demo',
-      home: HomePage(analytics: analytics),
+      onGenerateRoute: (settings) {
+        // Let PageViewAnalytics handle the route for analytics
+        analytics.onGenerateRoute(settings);
+        
+        // Your actual route generation logic here
+        // ...
+      },
+      // ... other MaterialApp properties
+    );
+  }
+}
+```
+
+4. Don't forget to dispose of the analytics object when it's no longer needed:
+
+```dart
+@override
+void dispose() {
+  analytics.dispose();
+  super.dispose();
+}
+```
+
+## Example
+
+Here's a more complete example of how to use PageViewAnalytics in a Flutter app:
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:page_view_analytics/page_view_analytics.dart';
+
+void main() {
+  final analytics = PageViewAnalytics(
+    onPageStart: (pageName, pageData) {
+      print('Page started: $pageName');
+      print('Page data: $pageData');
+    },
+    onPageStop: (pageName, timeSpent, pageData) {
+      print('Page stopped: $pageName');
+      print('Time spent: $timeSpent seconds');
+      print('Page data: $pageData');
+    },
+  );
+
+  runApp(MyApp(analytics: analytics));
+}
+
+class MyApp extends StatelessWidget {
+  final PageViewAnalytics analytics;
+
+  MyApp({required this.analytics});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'PageViewAnalytics Demo',
+      onGenerateRoute: (settings) {
+        analytics.onGenerateRoute(settings);
+        
+        // Your actual route generation logic
+        switch (settings.name) {
+          case '/':
+            return MaterialPageRoute(builder: (_) => HomePage());
+          case '/details':
+            return MaterialPageRoute(builder: (_) => DetailsPage());
+          default:
+            return null;
+        }
+      },
+      home: HomePage(),
     );
   }
 }
 
 class HomePage extends StatelessWidget {
-  final PageAnalytics analytics;
-
-  HomePage({required this.analytics});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -113,13 +146,7 @@ class HomePage extends StatelessWidget {
         child: ElevatedButton(
           child: Text('Go to Details'),
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => DetailsPage(analytics: analytics),
-                settings: RouteSettings(name: '/details', arguments: {'id': '123'}),
-              ),
-            );
+            Navigator.pushNamed(context, '/details', arguments: {'id': '123'});
           },
         ),
       ),
@@ -128,10 +155,6 @@ class HomePage extends StatelessWidget {
 }
 
 class DetailsPage extends StatelessWidget {
-  final PageAnalytics analytics;
-
-  DetailsPage({required this.analytics});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -142,18 +165,10 @@ class DetailsPage extends StatelessWidget {
 }
 ```
 
-## Customization
+In this example, the `PageViewAnalytics` instance will track navigation between the `HomePage` and `DetailsPage`, providing start and stop events for each page view.
 
-You can customize the behavior of PageAnalytics by modifying the following parameters:
+## Notes
 
-- `onPageStart`: A callback function that is called when a new page is started.
-- `onPageStop`: A callback function that is called when a page is stopped (navigated away from).
-- `restrictedScreens`: A list of route names that should not be tracked.
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+- Make sure to handle the disposal of the `PageViewAnalytics` instance when it's no longer needed to avoid memory leaks.
+- The `restrictedScreens` parameter allows you to specify pages that should not be tracked.
+- The plugin automatically handles app lifecycle changes, tracking when the app is paused or resumed.

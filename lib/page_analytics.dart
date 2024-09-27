@@ -3,8 +3,10 @@ library page_analytics;
 
 import 'package:flutter/material.dart';
 
-typedef PageStartCallback = void Function(String pageName, Map<String, dynamic> pageData);
-typedef PageStopCallback = void Function(String pageName, String timeSpent, Map<String, dynamic> pageData);
+typedef PageStartCallback = void Function(
+    String pageName, Map<String, dynamic> pageData);
+typedef PageStopCallback = void Function(
+    String pageName, String timeSpent, Map<String, dynamic> pageData);
 typedef RouteBuilder = Route<dynamic> Function(RouteSettings settings);
 
 class PageAnalytics with WidgetsBindingObserver {
@@ -42,8 +44,9 @@ class PageAnalytics with WidgetsBindingObserver {
 
   Route<dynamic> onGenerateRoute(RouteSettings settings) {
     final String routeName = settings.name ?? '';
-    final Map<String, dynamic> arguments = settings.arguments as Map<String, dynamic>? ?? {};
-    
+    final Map<String, dynamic> arguments =
+        settings.arguments as Map<String, dynamic>? ?? {};
+
     if (_shouldTrackPage(routeName)) {
       _stopCurrentPage();
       _startNewPage(routeName, arguments);
@@ -72,7 +75,9 @@ class PageAnalytics with WidgetsBindingObserver {
     final timeSpent = duration.inSeconds.toString();
 
     onPageStop(
-      isAppPaused ? _currentPageName! : (_previousPageName ?? _currentPageName!),
+      isAppPaused
+          ? _currentPageName!
+          : (_previousPageName ?? _currentPageName!),
       timeSpent,
       _currentPageData,
     );
